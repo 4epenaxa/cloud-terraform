@@ -1,0 +1,8 @@
+.terraform*
+*.tfvars
+*tfstate*
+evo-terraform/
+.env
+temp/
+config*
+temp.yaml

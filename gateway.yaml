@@ -1,0 +1,28 @@
+# gateway.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: farm-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  gatewayClassName: envoy-gateway
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: farm.kuku.tw1.ru
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: farm-kuku-tls
+      allowedRoutes:
+        namespaces:
+          from: All
