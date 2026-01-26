@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 echo "🚀 Terraform destroy"
-terraform destroy -auto-approve
+terraform -chdir=terraform-evolution destroy -auto-approve
 echo "🎉 Destroying completed successfully"
