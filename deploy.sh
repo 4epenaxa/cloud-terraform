@@ -1,7 +1,8 @@
 #!/bin/sh
 
 echo "🚀 Terraform apply"
-terraform apply -auto-approve
+terraform -chdir=terraform-evolution init
+terraform -chdir=terraform-evolution apply -auto-approve
 
 echo "🔐 Getting kubeconfig"
 chmod +x kubeconfig.sh

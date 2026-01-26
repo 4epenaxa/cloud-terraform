@@ -4,14 +4,14 @@
 
 KUBECONFIG_FILE="${1:-temp.yaml}"
 
-terraform output -json kubeconfig | jq -r '.raw' | base64 --decode > $KUBECONFIG_FILE
+terraform -chdir=terraform-evolution output -json kubeconfig | jq -r '.raw' | base64 --decode > $KUBECONFIG_FILE
 
 echo "Updating Cloud.ru credentials in kubeconfig"
 echo "Kubeconfig file: $KUBECONFIG_FILE"
 echo ""
 
 # Load credentials from .env file
-ENV_FILE="${2:-.env}"
+ENV_FILE="${2:-./terraform-evolution/.env}"
 
 if [ ! -f "$ENV_FILE" ]; then
     echo "Error: .env file not found at $ENV_FILE"
@@ -68,3 +68,5 @@ echo "You can now use kubectl with your cluster."
 kubectl cluster-info
 
 echo "Cluster connected and ready for work"
+
+rm temp.yaml
