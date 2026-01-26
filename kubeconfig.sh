@@ -67,4 +67,4 @@ echo "You can now use kubectl with your cluster."
 
 kubectl cluster-info
 
-echo "Cluster connected and ready for work""
+echo "Cluster connected and ready for work"

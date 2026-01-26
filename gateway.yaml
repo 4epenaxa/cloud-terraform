@@ -17,12 +17,12 @@ spec:
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: farm.kuku.tw1.ru
+      hostname: ${YOUR_LOAD_BALANCER_IP}
       tls:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: farm-kuku-tls
+            name: farm-cert-tls
       allowedRoutes:
         namespaces:
           from: All

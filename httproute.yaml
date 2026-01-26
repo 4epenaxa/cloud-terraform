@@ -7,7 +7,7 @@ spec:
   parentRefs:
     - name: farm-gateway
   hostnames:
-    - farm.kuku.tw1.ru
+    - ${YOUR_LOAD_BALANCER_IP}
   rules:
     - matches:
         - path:

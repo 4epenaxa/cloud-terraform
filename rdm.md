@@ -3,16 +3,16 @@ auth_key_id = "35c2ec6fce1f7805ded91d5bea385b"
 auth_secret = "c6c08faa4e2166be942b0a33ba0746"
 project_id = "1e4b06b-6141-4167-a01c-c9013957d24" 
 customer_id = "7ef2d5b-7670-465f-9453-bfb5dfbb41e" -->
-
+<!-- 
+поднимем кластер -->
 terraform apply -auto-approve
-terraform output -json kubeconfig | jq -r '.raw' | base64 --decode > temp.yaml
 
 <!-- .env надо добавить с правильными кредами
 CLOUDRU_KEY_ID=35c2ec6fce78057cded91d5bea385b
 CLOUDRU_SECRET_ID=c6c08faa4166beec942b0a33ba0746 -->
 
-chmod +x kubeconfig.sh
-./kubeconfig.sh
+<!-- получаем креды от кластера и подключаемся -->
+chmod +x kubeconfig.sh && ./kubeconfig.sh
 
 <!-- 1. whoami -->
 kubectl apply -f whoami.yaml
@@ -20,22 +20,28 @@ kubectl apply -f whoami.yaml
 <!-- 2. cert-manager -->
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
 
-kubectl -n cert-manager patch deploy cert-manager \
-  --type=json \
-  -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-gateway-api"}]'
-
-kubectl apply -f cert.yaml
-kubectl apply -f issuer.yaml
+kubectl -n cert-manager patch deploy cert-manager --type=json -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-gateway-api"}]'
 
 <!-- 3. gateway -->
 kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/download/v1.6.2/install.yaml
 
 kubectl apply -f gatewayclass.yaml
-kubectl apply -f gateway.yaml
+<!-- kubectl apply -f gateway.yaml -->
+YOUR_LOAD_BALANCER_IP=example.com envsubst < gateway.yaml | kubectl apply -f -
+
+<!-- kubectl apply -f cert.yaml -->
+YOUR_LOAD_BALANCER_IP=example.com envsubst < cert.yaml | kubectl apply -f -
+
+kubectl apply -f issuer.yaml
 
 <!-- 4. httproute -->
 
-kubectl apply -f httproute.yaml
+<!-- kubectl apply -f httproute.yaml -->
+YOUR_LOAD_BALANCER_IP=example.com envsubst < httproute.yaml | kubectl apply -f -
+
+chmod +x getip.sh && ./getip.sh
+
+chmod +x renewdomainnames.sh && ./renewdomainnames.sh
 
 <!-- ✅ готово -->
 
