@@ -22,22 +22,17 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/do
 
 kubectl -n cert-manager patch deploy cert-manager --type=json -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-gateway-api"}]'
 
+
+kubectl apply -f issuer.yaml
+
 <!-- 3. gateway -->
 kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/download/v1.6.2/install.yaml
 
 kubectl apply -f gatewayclass.yaml
-<!-- kubectl apply -f gateway.yaml -->
+
 YOUR_LOAD_BALANCER_IP=example.com envsubst < gateway.yaml | kubectl apply -f -
 
-<!-- kubectl apply -f cert.yaml -->
-YOUR_LOAD_BALANCER_IP=example.com envsubst < cert.yaml | kubectl apply -f -
-
-kubectl apply -f issuer.yaml
-
-<!-- 4. httproute -->
-
-<!-- kubectl apply -f httproute.yaml -->
-YOUR_LOAD_BALANCER_IP=example.com envsubst < httproute.yaml | kubectl apply -f -
+<!-- 4. httproute + gateway + certs -->
 
 chmod +x getip.sh && ./getip.sh
 

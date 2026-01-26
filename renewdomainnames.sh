@@ -14,4 +14,5 @@ echo "Apply for cert"
 envsubst < cert.yaml | kubectl apply -f -
 echo "Apply for httproute"
 envsubst < httproute.yaml | kubectl apply -f -
-printf "✔ Domain: https://%s\n" "$YOUR_LOAD_BALANCER_IP"
+echo "✅ DONE"
+printf "🌍 Domain: https://%s\n" "$YOUR_LOAD_BALANCER_IP"
