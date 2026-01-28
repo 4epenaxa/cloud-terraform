@@ -41,6 +41,43 @@ chmod +x renewdomainnames.sh && ./renewdomainnames.sh
 <!-- ✅ готово -->
 
 
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install loki grafana/loki --version 6.29.0 --namespace monitoring \
+  --set deploymentMode=SingleBinary \
+  --set loki.auth_enabled=false \
+  --set singleBinary.replicas=1 \
+  --set write.replicas=0 \
+  --set read.replicas=0 \
+  --set backend.replicas=0 \
+  --set loki.commonConfig.replication_factor=1 \
+  --set loki.storage.type=filesystem \
+  --set loki.storage.filesystem.directory=/var/loki/chunks \
+  --set loki.useTestSchema=true \
+  --set chunksCache.enabled=false \
+  --set resultsCache.enabled=false \
+  --set test.enabled=false
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
+helm repo update 
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace \
+  --version 70.7.0 \
+  --set grafana.enabled=true \
+  --set grafana.adminUser=admin \
+  --set grafana.adminPassword=admin \
+  --set grafana.additionalDataSources[0].name=Loki \
+  --set grafana.additionalDataSources[0].type=loki \
+  --set grafana.additionalDataSources[0].url=http://loki-gateway.monitoring.svc.cluster.local \
+  --set grafana.additionalDataSources[0].access=proxy \
+  --set grafana.grafana.ini.server.root_url="https://95.174.89.128.nip.io/monitoring/" \
+  --set grafana.grafana.ini.server.serve_from_sub_path=true
+
+
+
+
+<!-- old -->
 kubectl create namespace monitoring
 helm search repo loki
 helm install loki grafana/loki --version 6.29.0 --namespace monitoring \
@@ -74,3 +111,25 @@ kubectl get secret -n monitoring prometheus-grafana -o jsonpath="{.data.admin-pa
 #prom-operator
 
 kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
+
+
+
+
+хэлмфайл macos amd
+# 1. Скачиваем архив
+curl -Lo helmfile_1.2.3_darwin_amd64.tar.gz \
+https://github.com/helmfile/helmfile/releases/download/v1.2.3/helmfile_1.2.3_darwin_amd64.tar.gz
+
+# 2. Распаковываем архив
+tar -xzf helmfile_1.2.3_darwin_amd64.tar.gz
+
+# 3. Делаем бинарь исполняемым
+chmod +x helmfile
+
+# 4. Перемещаем в /usr/local/bin
+sudo mv helmfile /usr/local/bin/
+
+# 5. Проверяем версию
+helmfile --version
+
+helm plugin install https://github.com/databus23/helm-diff --verify=false

@@ -1,0 +1,15 @@
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: admin
+  
+  ini:
+    server:
+      root_url: https://95.174.89.128.nip.io/monitoring/
+      serve_from_sub_path: true
+  
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki-gateway.monitoring.svc.cluster.local
+      access: proxy

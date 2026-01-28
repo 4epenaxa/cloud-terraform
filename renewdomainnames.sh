@@ -8,11 +8,15 @@ YOUR_LOAD_BALANCER_IP="${IP}.nip.io"
 
 export YOUR_LOAD_BALANCER_IP
 
-echo "Apply for gateway"
+echo "⚠️ Apply for gateway"
 envsubst < gateway.yaml | kubectl apply -f -
-echo "Apply for cert"
+echo "⚠️ Apply for cert"
 envsubst < cert.yaml | kubectl apply -f -
-echo "Apply for httproute"
+echo "⚠️ Apply for main-httproute"
 envsubst < httproute.yaml | kubectl apply -f -
+echo "⚠️ Apply for monitoring-httproute"
+kubectl create ns monitoring
+envsubst < ./monitoring/httproute-monitoring.yaml | kubectl apply -f -
+
 echo "✅ DONE"
 printf "🌍 Domain: https://%s\n" "$YOUR_LOAD_BALANCER_IP"
