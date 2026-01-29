@@ -12,3 +12,5 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - ${YOUR_LOAD_BALANCER_IP}
+    - monitoring.${YOUR_LOAD_BALANCER_IP}
+    - portainer.${YOUR_LOAD_BALANCER_IP}

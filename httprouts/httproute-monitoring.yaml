@@ -8,12 +8,12 @@ spec:
     - name: farm-gateway
       namespace: default
   hostnames:
-    - ${YOUR_LOAD_BALANCER_IP}
+    - monitoring.${YOUR_LOAD_BALANCER_IP}
   rules:
     - matches:
         - path:
             type: PathPrefix
-            value: /monitoring
+            value: /
       backendRefs:
         - name: prometheus-grafana
           port: 80

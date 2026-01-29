@@ -26,3 +26,27 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - name: https-portainer
+      protocol: HTTPS
+      port: 443
+      hostname: portainer.${YOUR_LOAD_BALANCER_IP}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: farm-cert-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https-monitoring
+      protocol: HTTPS
+      port: 443
+      hostname: monitoring.${YOUR_LOAD_BALANCER_IP}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: farm-cert-tls
+      allowedRoutes:
+        namespaces:
+          from: All
