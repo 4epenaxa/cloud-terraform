@@ -6,3 +6,5 @@ evo-terraform/
 temp/
 config*
 temp.yaml
+nginx/
+_delete/

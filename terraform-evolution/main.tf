@@ -5,10 +5,10 @@ resource "cloudru_k8s_cluster" "farm-k8s-cluster" {
         type        = "MASTER_TYPE_SMALL"
         version     = var.k8s_version
         zones = [
-            var.az2
+            var.az3
         ]
     }
-    release_channel = "RELEASE_CHANNEL_STABLE"
+    release_channel = "RELEASE_CHANNEL_REGULAR"
 # VPC               10.0.0.0/16
 # Service network   10.96.0.0/12
 # Node subnet       10.0.4.0/24 
@@ -39,7 +39,7 @@ resource "cloudru_k8s_cluster" "farm-k8s-cluster" {
 resource "cloudru_k8s_nodepool" "farm-k8s-nodepool" {
     cluster_id  = cloudru_k8s_cluster.farm-k8s-cluster.id
     name        = var.nodepool_name
-    zone        = var.az2
+    zone        = var.az3
     scale_policy  = {
         fixed_scale = {
             count   = 2
@@ -74,14 +74,14 @@ resource "cloudru_evolution_subnet" "farm-subnet" {
         "8.8.4.4"
     ]
     availability_zone {
-        id = var.az2
+        id = var.az3
     }
 }
 
 resource "cloudru_evolution_nat_gateway" "gateway" {
     name = "farm-gateway"
     availability_zone {
-        id = var.az2
+        id = var.az3
     }
     nat_type    = "Public sNAT"
     depends_on = [

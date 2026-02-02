@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 echo "📊 Portainer install"
 kubectl create namespace portainer
 helm upgrade --install portainer portainer/portainer \

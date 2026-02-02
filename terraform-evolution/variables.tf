@@ -81,7 +81,7 @@ variable "cluster_description" {
 
 variable "k8s_version" {
     type        = string
-    default     = "v1.33.2"
+    default     = "v1.34.1"
     description = "k8s version"
 }
 variable "ssh_user_key_id" {

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 echo "📊 Installing loki"
 helm upgrade --install loki grafana/loki \
     --version 6.29.0 \

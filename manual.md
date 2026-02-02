@@ -12,10 +12,12 @@
 ## 📋 Требования
 
 - terraform
+- cloud provider
+https://cloud.ru/docs/terraform-evolution/ug/topics/quickstart
+- cloudlogin
+https://cloud.ru/docs/kubernetes-evolution/ug/topics/guides__cluster__download-cloudlogin
 - kubectl
-- envsubst
-- bash / sh
-- доступ к Kubernetes (VPS / cloud)
+https://kubernetes.io/docs/tasks/tools/
 
 ---
 

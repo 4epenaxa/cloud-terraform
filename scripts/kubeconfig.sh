@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Interactive script to update CLOUDRU credentials in kubeconfig
 
 KUBECONFIG_FILE="${1:-temp.yaml}"

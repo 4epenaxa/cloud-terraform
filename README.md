@@ -1,5 +1,12 @@
 # cloudlogin
 
+Утилита для получения и обновления пользовательского токена на основе персональных ключей доступа Cloud.ru.
+Необходима при подключении к кластеру Evolution Managed Kubernetes.
+
+При работе с kubectl утилита cloudlogin будет автоматически запрашивать и обновлять токен для подключения к кластеру. 
+Если токен валидный, пользователь получит доступ к кластеру. 
+При просроченом токене cloudlogin перевыпустит его.
+
 ## Установка и настройка
  
 1. Скачайте cloudlogin для вашей операционной системы.
@@ -124,24 +131,3 @@ cloudlogin convert-kubeconfig --kubeconfig <kubeconfig_path> --username <user> -
    Опциональный параметр. По умолчанию — `--iam-url https://id.cloud.ru/auth/system/openid/token`.
 
 Далее необходимо настроить kubeconfig.
-
-terraform apply
-
-yes
-
-## Получаем kubeconfig.yaml
-terraform output -json kubeconfig | jq -r '.raw' | base64 --decode > kube.yaml
-
-> Заменить секретные ключи в файле kube.yaml
-      - name: CLOUDRU_KEY_ID
-        value: ""
-      - name: CLOUDRU_SECRET_ID
-        value: ""
-
-cp kube.yaml ~/.kube/config
-
-kubectl cluster-info
-
-helm install monitoring ./monitoring
-
-kubectl get all
