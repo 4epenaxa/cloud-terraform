@@ -14,23 +14,26 @@
 
 ## 📋 Требования
 
-- terraform
+- Terraform
 Скорее всего понадобится VPN
-
 
 https://developer.hashicorp.com/terraform/install
 
-- kubectl
-
+- Kubectl
 
 https://kubernetes.io/docs/tasks/tools/
 
+- Helm
+
+https://github.com/helm/helm/releases/tag/v4.1.0
+
 Для работы с Cloud Evolution понадобится:
-- cloud provider
+- Cloud provider
 
 
 https://cloud.ru/docs/terraform-evolution/ug/topics/quickstart
-- cloudlogin
+
+- Cloudlogin
 
 
 https://cloud.ru/docs/kubernetes-evolution/ug/topics/guides__cluster__download-cloudlogin

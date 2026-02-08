@@ -20,6 +20,9 @@
 data "cloudru_k8s_kubeconfig" "kubeconfig" {
     cluster_id = cloudru_k8s_cluster.farm-k8s-cluster.id
     network_type = "NETWORK_TYPE_PUBLIC"
+    depends_on = [
+        cloudru_k8s_nodepool.farm-k8s-nodepool
+    ]
 }
 output "kubeconfig" {
     value     = data.cloudru_k8s_kubeconfig.kubeconfig

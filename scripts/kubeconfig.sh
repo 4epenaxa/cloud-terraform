@@ -58,7 +58,25 @@ awk -v key_id="$KEY_ID" -v secret_id="$SECRET_ID" '
 }
 ' "$KUBECONFIG_FILE" > "$KUBECONFIG_FILE.tmp"
 
+# Проверяем существование директории ~/.kube
+if [[ ! -d "~/.kube" ]]; then
+    mkdir -p ~/.kube
+    echo "Directory ~/.kube created"
+else
+    echo "Directory ~/.kube already exists"
+fi
+
+# Проверяем наличие существующего config-файла и создаем резервную копию
+if [[ -f "~/.kube/config" ]]; then
+    # Создаем резервную копию текущего файла конфигурации
+    mv ~/.kube/config ~/.kube/config.backup.$(date +"%Y-%m-%d_%H:%M:%S")
+    echo "Backup of existing config file created"
+fi
+
+# Перемещаем временный файл в каталог ~/.kube
 mv "$KUBECONFIG_FILE.tmp" ~/.kube/config
+echo "New configuration file moved to ~/.kube/config"
+
 
 echo "Credentials updated successfully!"
 echo "You can now use kubectl with your cluster."

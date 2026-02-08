@@ -50,3 +50,15 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - name: https-adminer
+      protocol: HTTPS
+      port: 443
+      hostname: adminer.${YOUR_LOAD_BALANCER_IP}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: farm-cert-tls
+      allowedRoutes:
+        namespaces:
+          from: All

@@ -14,3 +14,4 @@ spec:
     - ${YOUR_LOAD_BALANCER_IP}
     - monitoring.${YOUR_LOAD_BALANCER_IP}
     - portainer.${YOUR_LOAD_BALANCER_IP}
+    - adminer.${YOUR_LOAD_BALANCER_IP}

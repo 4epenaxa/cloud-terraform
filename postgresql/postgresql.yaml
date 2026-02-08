@@ -49,6 +49,29 @@ spec:
         volumeMounts:
           - name: postgres-data
             mountPath: /var/lib/postgresql/data
+        # ADD HEALTH CHECKS HERE
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - "-c"
+            - 'PGPASSWORD=$POSTGRES_PASSWORD psql -h localhost -p 5432 -d $POSTGRES_DB -U $POSTGRES_USER -c "SELECT 1"'
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - "-c"
+            - 'PGPASSWORD=$POSTGRES_PASSWORD psql -h localhost -p 5432 -d $POSTGRES_DB -U $POSTGRES_USER -c "SELECT 1"'
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+          periodSeconds: 10
   volumeClaimTemplates:
     - metadata:
         name: postgres-data

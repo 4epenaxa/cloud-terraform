@@ -8,3 +8,5 @@ config*
 temp.yaml
 nginx/
 _delete/
+s3_creds
+.DS_Store

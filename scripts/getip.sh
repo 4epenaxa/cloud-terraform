@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 INTERVAL=5
 ELAPSED=0

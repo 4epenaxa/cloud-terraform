@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 START_TIME=$(date +%s)
 echo "🚀 Terraform apply"
 terraform -chdir=terraform-evolution init
@@ -52,6 +53,7 @@ echo "📊 repos updated"
 
 source ./scripts/deploy-m.sh
 source ./scripts/deploy-ui.sh
+source ./scripts/deploy-db.sh
 
 echo "🔁 Renew domain names"
 source ./scripts/renewdomainnames.sh
@@ -64,4 +66,13 @@ echo "⏳ Кластер развернут и готов к работе"
 MINUTES=$((ELAPSED_TIME / 60))
 SECONDS_REMAINDER=$(($ELAPSED_TIME % 60))
 
-echo "Время выполнения скрипта: ${MINUTES} минут и ${SECONDS_REMAINDER} секунд"-
+echo "Время выполнения скрипта: ${MINUTES}:${SECONDS_REMAINDER} мин"
+# ./backupS3/velero.sh
+
+
+# Выводим код завершения последней команды и добавляем логику на случай ошибки
+last_command_status=$?
+if [ $last_command_status != 0 ]; then
+  echo "Ошибка при выполнении предыдущей команды. Код ошибки: $last_command_status"
+  exit 1
+fi
