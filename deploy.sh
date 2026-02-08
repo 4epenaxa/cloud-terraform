@@ -67,8 +67,6 @@ MINUTES=$((ELAPSED_TIME / 60))
 SECONDS_REMAINDER=$(($ELAPSED_TIME % 60))
 
 echo "Время выполнения скрипта: ${MINUTES}:${SECONDS_REMAINDER} мин"
-# ./backupS3/velero.sh
-
 
 # Выводим код завершения последней команды и добавляем логику на случай ошибки
 last_command_status=$?

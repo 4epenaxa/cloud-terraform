@@ -1,11 +1,10 @@
-# clusterissuer.yaml
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    email: 4epenaxa@mail.ru
+    email: <your_mail>
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod

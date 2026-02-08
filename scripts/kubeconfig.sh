@@ -2,7 +2,7 @@
 
 KUBECONFIG_FILE="${1:-temp.yaml}"
 
-terraform -chdir=terraform-evolution output -json kubeconfig | jq -r '.raw' | base64 --decode > $KUBECONFIG_FILE
+terraform -chdir=terraform-evolution output -json kubeconfig | jq -r '.raw' | tr -d '\r' | base64 --decode > $KUBECONFIG_FILE
 
 echo "Updating Cloud.ru credentials in kubeconfig"
 echo "Kubeconfig file: $KUBECONFIG_FILE"
