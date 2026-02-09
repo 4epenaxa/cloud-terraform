@@ -60,12 +60,19 @@ jobs:
         echo "CLOUDRU_SECRET_ID=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/.env
         echo ".env file generated:"
         cat terraform-evolution/.env
+        echo "${{ secrets.TG_BOT_TOKEN }}"
+    
+    - name: Create terraform.tfvars file
+      run: |
         echo "auth_key_id=\"${{ secrets.AUTH_KEY_ID }}\"" >> terraform-evolution/terraform.tfvars
         echo "project_name=\"${{ secrets.AUTH_SECRET }}\"" >> terraform-evolution/terraform.tfvars
         echo "project_id=\"${{ secrets.PROJECT_ID }}\"" >> terraform-evolution/terraform.tfvars
         echo "customer_id=\"${{ secrets.CUSTOMER_ID }}\"" >> terraform-evolution/terraform.tfvars
         echo "terraform.tfvars file generated:"
         cat terraform-evolution/terraform.tfvars
+        
+    - name: Execute custom script
+      run: |
         chmod +x deploy.sh
         ./deploy.sh
         
