@@ -67,13 +67,11 @@ jobs:
         echo "auth_secret=\"${{ secrets.AUTH_SECRET }}\"" >> terraform-evolution/terraform.tfvars
         echo "project_id=\"${{ secrets.PROJECT_ID }}\"" >> terraform-evolution/terraform.tfvars
         echo "customer_id=\"${{ secrets.CUSTOMER_ID }}\"" >> terraform-evolution/terraform.tfvars
-        echo "terraform.tfvars file generated:"
-        cat terraform-evolution/terraform.tfvars
+    # echo "terraform.tfvars file generated:"
+    # cat terraform-evolution/terraform.tfvars
         
     - name: Execute custom script
       run: |
-        ls -alF
-        ls -alF terraform-evolution/
         chmod +x deploy.sh
         ./deploy.sh
         
