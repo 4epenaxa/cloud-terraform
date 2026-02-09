@@ -35,10 +35,9 @@ jobs:
     - name: Install Cloud Provider Plugin
       run: |
         cd \
-        mkdir -p .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64
-        curl -L --create-dirs -o .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64/terraform-provider-cloud_1.6.0_linux_amd64 \
-          https://github.com/CLOUDdotRu/evo-terraform/releases/download/1.6.0/terraform-provider-cloud_1.6.0_linux_amd64
-        chmod +x .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64/terraform-provider-cloud_1.6.0_linux_amd64
+        && curl -L --create-dirs -o .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64/terraform-provider-cloud_1.6.0_linux_amd64 \
+        https://github.com/CLOUDdotRu/evo-terraform/releases/download/1.6.0/terraform-provider-cloud_1.6.0_linux_amd64 \
+        && chmod +x .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64/terraform-provider-cloud_1.6.0_linux_amd64
 
     - name: Install Cloud Login Tool
       run: |
@@ -55,10 +54,6 @@ jobs:
     #   run: |
     #     sudo apt-get install -y gettext-base
 
-    - name: Execute custom script
-      run: |
-        chmod +x deploy.sh
-        ./deploy.sh
 
     - name: Send Success Notification
       if: success()
@@ -73,3 +68,8 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ secrets.TG_CHAT_ID }} \
           -d text="❗️ Установка НЕ произошла"
+
+    - name: Execute custom script
+      run: |
+        chmod +x deploy.sh
+        ./deploy.sh
