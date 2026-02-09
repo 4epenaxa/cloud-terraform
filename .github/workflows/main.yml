@@ -1,0 +1,63 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        cli-config-path: '.terraformrc'  # Конфиги Terraform
+        tfx-plugin-install: true         # Поддержка дополнительного функционала
+
+    - name: Install kubectl
+      run: |
+        sudo snap install kubectl --classic
+
+    - name: Install Helm
+      run: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+
+    - name: Install Cloud Provider Plugin
+      run: |
+        mkdir -p .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64
+        curl -L --create-dirs -o .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64/terraform-provider-cloud_1.6.0_linux_amd64 \
+          https://github.com/CLOUDdotRu/evo-terraform/releases/download/1.6.0/terraform-provider-cloud_1.6.0_linux_amd64
+        chmod +x .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64/terraform-provider-cloud_1.6.0_linux_amd64
+
+    - name: Install Cloud Login Tool
+      run: |
+        curl -LO https://github.com/cloud-ru-tech/cloudlogin/releases/download/v1.0.2/cloudlogin_Linux_amd64.tar.gz
+        tar -xzf cloudlogin_Linux_amd64.tar.gz
+        sudo mv cloudlogin /usr/local/bin/
+
+    - name: Prepare JQ
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+
+    - name: Install Other Required Tools
+      run: |
+        sudo apt-get install -y gettext-base
+
+    - name: Execute custom script
+      run: |
+        chmod +x deploy.sh
+        ./deploy.sh
+
+    - name: Send Success Notification
+      if: success()
+      run: |
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TG_CHAT_ID }} \
+          -d text="✅ Установка произведена успешно"
+
+    - name: Send Failure Notification
+      if: failure()
+      run: |
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TG_CHAT_ID }} \
+          -d text="❗️ Установка НЕ произошла"
