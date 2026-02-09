@@ -20,8 +20,7 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
-        cli-config-path: '.terraformrc'  # Конфиги Terraform
-        tfx-plugin-install: true         # Поддержка дополнительного функционала
+        terraform_version: latest  # Или указывай конкретную версию
 
     - name: Install kubectl
       run: |
@@ -35,6 +34,7 @@ jobs:
 
     - name: Install Cloud Provider Plugin
       run: |
+        cd \
         mkdir -p .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64
         curl -L --create-dirs -o .terraform.d/plugins/cloud.ru/cloudru/cloud/1.6.0/linux_amd64/terraform-provider-cloud_1.6.0_linux_amd64 \
           https://github.com/CLOUDdotRu/evo-terraform/releases/download/1.6.0/terraform-provider-cloud_1.6.0_linux_amd64
@@ -46,14 +46,14 @@ jobs:
         tar -xzf cloudlogin_Linux_amd64.tar.gz
         sudo mv cloudlogin /usr/local/bin/
 
-    - name: Prepare JQ
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y jq
+    # - name: Prepare JQ
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y jq
 
-    - name: Install Other Required Tools
-      run: |
-        sudo apt-get install -y gettext-base
+    # - name: Install Other Required Tools
+    #   run: |
+    #     sudo apt-get install -y gettext-base
 
     - name: Execute custom script
       run: |
