@@ -54,12 +54,12 @@ jobs:
     #   run: |
     #     sudo apt-get install -y gettext-base
 
-    - name: Create .env file
-      run: |
-        echo "CLOUDRU_KEY_ID=${{ secrets.AUTH_KEY_ID }}" >> terraform-evolution/.env
-        echo "CLOUDRU_SECRET_ID=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/.env
-        echo ".env file generated:"
-        cat terraform-evolution/.env
+    # - name: Create .env file
+    #   run: |
+    #     echo "CLOUDRU_KEY_ID=${{ secrets.AUTH_KEY_ID }}" >> terraform-evolution/.env
+    #     echo "CLOUDRU_SECRET_ID=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/.env
+    #     echo ".env file generated:"
+    #     cat terraform-evolution/.env
     
     - name: Create terraform.tfvars file
       run: |
