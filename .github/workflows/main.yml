@@ -60,7 +60,6 @@ jobs:
         echo "CLOUDRU_SECRET_ID=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/.env
         echo ".env file generated:"
         cat terraform-evolution/.env
-        echo "${{ secrets.TG_BOT_TOKEN }}"
     
     - name: Create terraform.tfvars file
       run: |
@@ -73,6 +72,8 @@ jobs:
         
     - name: Execute custom script
       run: |
+        ls -alF
+        ls -alF terraform-evolution/
         chmod +x deploy.sh
         ./deploy.sh
         
