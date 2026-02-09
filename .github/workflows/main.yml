@@ -74,7 +74,7 @@ jobs:
         echo "CLOUDRU_KEY_ID=\"${{ secrets.AUTH_KEY_ID }}\"" >> terraform-evolution/.env
         echo "CLOUDRU_SECRET_ID=\"${{ secrets.AUTH_SECRET }}\"" >> terraform-evolution/.env
         echo ".env file generated:"
-
+        cat terraform-evolution/.env
     - name: Create terraform.tfvars file
       run: |
         echo "auth_key_id=\"${{ secrets.AUTH_KEY_ID }}\"" >> terraform-evolution/terraform.tfvars
