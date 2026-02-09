@@ -59,16 +59,30 @@ jobs:
       if: success()
       run: |
         curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
-          -d chat_id=${{ secrets.TG_CHAT_ID }} \
+          -d chat_id=${{ vars.TG_AKSYUTA }} \
           -d text="✅ Установка произведена успешно"
 
     - name: Send Failure Notification
       if: failure()
       run: |
         curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
-          -d chat_id=${{ secrets.TG_CHAT_ID }} \
+          -d chat_id=${{ vars.TG_AKSYUTA }} \
           -d text="❗️ Установка НЕ произошла"
+          
+    - name: Create .env file
+      run: |
+        echo "CLOUDRU_KEY_ID=${{ secrets.AUTH_KEY_ID }}" >> terraform-evolution/.env
+        echo "CLOUDRU_SECRET_ID=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/.env
+        echo ".env file generated:"
 
+    - name: Create terraform.tfvars file
+      run: |
+        echo "auth_key_id=${{ secrets.AUTH_KEY_ID }}" >> terraform-evolution/terraform.tfvars
+        echo "project_name=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/terraform.tfvars
+        echo "project_id=${{ secrets.PROJECT_ID }}" >> terraform-evolution/terraform.tfvars
+        echo "customer_id=${{ secrets.CUSTOMER_ID }}" >> terraform-evolution/terraform.tfvars
+        echo "terraform.tfvars file generated:"
+    
     - name: Execute custom script
       run: |
         chmod +x deploy.sh
