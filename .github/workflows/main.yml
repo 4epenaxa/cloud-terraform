@@ -62,7 +62,7 @@ jobs:
     #     sudo apt-get update
     #     sudo apt-get install -y jq gettext-base
     
-    - name: Execute custom script
+    - name: Kubernetes Cluster Evolution Create
       run: |
         terraform -chdir=terraform-evolution init
         terraform -chdir=terraform-evolution apply -auto-approve
@@ -88,10 +88,52 @@ jobs:
             print $0
         }
         ' "temp.yaml" > "temp.yaml.tmp"
-        cat temp.yaml.tmp
         export KUBECONFIG=$(pwd)/temp.yaml.tmp
         kubectl cluster-info
-        
+
+    - name: Save Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-states
+        path: terraform-evolution/*
+
+    - name: Kubernetes Service Install
+      run: |
+        echo "📦 Deploy whoami"
+        kubectl apply -f whoami.yaml
+
+        echo "📦 Deploy Gateway API CRDS"
+        kubectl apply --server-side -f ./gateway/install.envoy.standard.crds.v1.4.1.yaml
+
+        echo "🔒 Install cert-manager"
+        kubectl apply -f ./cert-manager/install.cert-manager.v1.19.3.yaml
+        # TODO: добавить конфиг в скачанный выше файл
+        kubectl -n cert-manager patch deploy cert-manager \
+          --type=json \
+          -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-gateway-api"}]'
+
+        # ждем готовности подов
+        echo "⏳ Pod readiness timeout starts"
+        kubectl wait --for=condition=Ready pods \
+          --all \
+          -n cert-manager \
+          --timeout=200s
+        echo "⏳ Timeout ends"
+        kubectl apply -f ./cert-manager/issuer.yaml
+
+        echo "🌐 Install Envoy Gateway"
+        kubectl apply --server-side -f ./gateway/install.envoy.gateway.v1.6.2.yaml
+
+        echo "🌐 Install GatewayClass"
+        kubectl apply -f ./gateway/gatewayclass.yaml
+
+        echo "⏳ Create Gateway with temporary domain"
+        YOUR_LOAD_BALANCER_IP=example.com envsubst < ./gateway/gateway.yaml | kubectl apply -f -
+
+        echo "🔍 Waiting for LoadBalancer IP"
+        chmod +x ./scripts/getip.sh
+        ./scripts/getip.sh
+
     - name: Send Success Notification
       if: success()
       run: |
@@ -105,7 +147,32 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ vars.TG_AKSYUTA }} \
           -d text="❗️ Установка НЕ произошла"
-          
+
+    # - name: Execute Terraform destroy
+    #   run: |
+    #     echo "🚀 Terraform destroy"
+    #     terraform -chdir=terraform-evolution destroy -auto-approve
+    #     echo "🎉 Destroying completed successfully"
+
+  destroy:
+    # needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Restore Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: terraform-states
+        path: terraform-evolution
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: latest
+
     - name: Execute Terraform destroy
       run: |
         echo "🚀 Terraform destroy"
