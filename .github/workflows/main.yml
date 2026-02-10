@@ -69,17 +69,15 @@ jobs:
         terraform -chdir=terraform-evolution output -json kubeconfig > ttt.yaml
         sed '1d' ttt.yaml > new_ttt.yaml
         mv new_ttt.yaml ttt.yaml
-        echo "✅ jq -> decode"
-        cat ttt.yaml | jq -r '.raw' | base64 --decode > ccc.yaml
-        echo "✅ cat ccc.yaml"
-        cat ccc.yaml
-        terraform -chdir=terraform-evolution output -json kubeconfig | jq -r '.raw' | base64 --decode > temp.yaml
+        cat ttt.yaml | jq -r '.raw' | base64 --decode > temp.yaml
         cat temp.yaml
         set -a
         source ".env"
         set +a
         KEY_ID="$CLOUDRU_KEY_ID"
         SECRET_ID="$CLOUDRU_SECRET_ID"
+        echo ""
+        echo ""
         echo "SUCCESS ${KEY_ID}"
         
         
