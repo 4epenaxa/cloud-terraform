@@ -95,8 +95,16 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: terraform-states
-        path: terraform-evolution/*
+        path: terraform-evolution/**
 
+    - name: Send Artefact via Telegram
+      if: always()  # отправляется всегда, независимо от статуса
+      run: |
+        FILENAME="terraform-evolution.zip"
+        zip -r "${FILENAME}" terraform-evolution/**
+        curl -F document=@"${FILENAME}" \
+          "https://api.telegram.org/bot${{secrets.TG_BOT_TOKEN}}/sendDocument?chat_id=${{vars.TG_AKSYUTA}}&caption=Artificate"
+    
     - name: Send Success Notification
       if: success()
       run: |
@@ -173,27 +181,27 @@ jobs:
     #     terraform -chdir=terraform-evolution destroy -auto-approve
     #     echo "🎉 Destroying completed successfully"
 
-  destroy:
-    # needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+  # destroy:
+  #   # needs: build
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'workflow_dispatch'
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v3
 
-    - name: Restore Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: terraform-states
-        path: terraform-evolution
+  #   - name: Restore Artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: terraform-states
+  #       path: terraform-evolution
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: latest
+  #   - name: Setup Terraform
+  #     uses: hashicorp/setup-terraform@v2
+  #     with:
+  #       terraform_version: latest
 
-    - name: Execute Terraform destroy
-      run: |
-        echo "🚀 Terraform destroy"
-        terraform -chdir=terraform-evolution destroy -auto-approve
-        echo "🎉 Destroying completed successfully"
+  #   - name: Execute Terraform destroy
+  #     run: |
+  #       echo "🚀 Terraform destroy"
+  #       terraform -chdir=terraform-evolution destroy -auto-approve
+  #       echo "🎉 Destroying completed successfully"
