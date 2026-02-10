@@ -45,21 +45,10 @@ jobs:
         tar -xzf cloudlogin_Linux_amd64.tar.gz
         sudo mv cloudlogin /usr/local/bin/
 
-    # - name: Prepare JQ
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install -y jq
-
-    # - name: Install Other Required Tools
-    #   run: |
-    #     sudo apt-get install -y gettext-base
-
-    # - name: Create .env file
-    #   run: |
-    #     echo "CLOUDRU_KEY_ID=${{ secrets.AUTH_KEY_ID }}" >> terraform-evolution/.env
-    #     echo "CLOUDRU_SECRET_ID=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/.env
-    #     echo ".env file generated:"
-    #     cat terraform-evolution/.env
+    - name: Create .env file
+      run: |
+        echo "CLOUDRU_KEY_ID=${{ secrets.AUTH_KEY_ID }}" >> terraform-evolution/.env
+        echo "CLOUDRU_SECRET_ID=${{ secrets.AUTH_SECRET }}" >> terraform-evolution/.env
     
     - name: Create terraform.tfvars file
       run: |
@@ -67,8 +56,6 @@ jobs:
         echo "auth_secret=\"${{ secrets.AUTH_SECRET }}\"" >> terraform-evolution/terraform.tfvars
         echo "project_id=\"${{ secrets.PROJECT_ID }}\"" >> terraform-evolution/terraform.tfvars
         echo "customer_id=\"${{ secrets.CUSTOMER_ID }}\"" >> terraform-evolution/terraform.tfvars
-    # echo "terraform.tfvars file generated:"
-    # cat terraform-evolution/terraform.tfvars
         
     - name: Execute custom script
       run: |
