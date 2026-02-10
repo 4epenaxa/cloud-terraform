@@ -69,6 +69,8 @@ jobs:
         terraform -chdir=terraform-evolution output -json kubeconfig > ttt.yaml
         pwd
         ls -alF
+        sed '1d' ttt.yaml > new_ttt.yaml
+        mv new_ttt.yaml ttt.yaml
         echo "✅ cat ttt.yaml"
         cat ttt.yaml
         echo "✅ head -c 10 deploy.sh"
@@ -86,6 +88,12 @@ jobs:
         cat ccc.yaml
         terraform -chdir=terraform-evolution output -json kubeconfig | jq -r '.raw' | base64 --decode > temp.yaml
         cat temp.yaml
+        set -a
+        source ".env"
+        set +a
+        KEY_ID="$CLOUDRU_KEY_ID"
+        SECRET_ID="$CLOUDRU_SECRET_ID"
+        echo "SUCCESS ${KEY_ID}"
         
         
     - name: Send Success Notification
