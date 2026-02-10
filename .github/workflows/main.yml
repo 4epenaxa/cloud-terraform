@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:  # Возможность ручного запуска
+  workflow_dispatch: {} # Возможность ручного запуска
 
 jobs:
   build:
@@ -174,9 +174,9 @@ jobs:
     #     echo "🎉 Destroying completed successfully"
 
   destroy:
-    needs: build
+    # needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: github.event_name == 'workflow_dispatch'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
