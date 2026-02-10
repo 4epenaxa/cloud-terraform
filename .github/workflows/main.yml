@@ -97,56 +97,75 @@ jobs:
         name: terraform-states
         path: terraform-evolution/*
 
-    - name: Kubernetes Service Install
-      run: |
-        echo "📦 Deploy whoami"
-        kubectl apply -f whoami.yaml
-
-        echo "📦 Deploy Gateway API CRDS"
-        kubectl apply --server-side -f ./gateway/install.envoy.standard.crds.v1.4.1.yaml
-
-        echo "🔒 Install cert-manager"
-        kubectl apply -f ./cert-manager/install.cert-manager.v1.19.3.yaml
-        # TODO: добавить конфиг в скачанный выше файл
-        kubectl -n cert-manager patch deploy cert-manager \
-          --type=json \
-          -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-gateway-api"}]'
-
-        # ждем готовности подов
-        echo "⏳ Pod readiness timeout starts"
-        kubectl wait --for=condition=Ready pods \
-          --all \
-          -n cert-manager \
-          --timeout=200s
-        echo "⏳ Timeout ends"
-        kubectl apply -f ./cert-manager/issuer.yaml
-
-        echo "🌐 Install Envoy Gateway"
-        kubectl apply --server-side -f ./gateway/install.envoy.gateway.v1.6.2.yaml
-
-        echo "🌐 Install GatewayClass"
-        kubectl apply -f ./gateway/gatewayclass.yaml
-
-        echo "⏳ Create Gateway with temporary domain"
-        YOUR_LOAD_BALANCER_IP=example.com envsubst < ./gateway/gateway.yaml | kubectl apply -f -
-
-        echo "🔍 Waiting for LoadBalancer IP"
-        chmod +x ./scripts/getip.sh
-        ./scripts/getip.sh
-
     - name: Send Success Notification
       if: success()
       run: |
         curl -s -X POST https://api.telegram.org/bot${{secrets.TG_BOT_TOKEN}}/sendMessage \
           -d chat_id=${{vars.TG_AKSYUTA}} \
-          -d text="✅ Установка произведена успешно"
+          -d text="✅ Установка кластера произведена успешно"
 
     - name: Send Failure Notification
       if: failure()
       run: |
         curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ vars.TG_AKSYUTA }} \
-          -d text="❗️ Установка НЕ произошла"
+          -d text="❗️ Установка кластера НЕ произошла"
+
+    # install:
+    #   needs: build
+    #   runs-on: ubuntu-latest
+    #   if: ${{ github.event_name == 'workflow_dispatch' }}
+    #   steps:
+    #   - name: Kubernetes Service Install
+    #     run: |
+    #       echo "📦 Deploy whoami"
+    #       kubectl apply -f whoami.yaml
+
+    #       echo "📦 Deploy Gateway API CRDS"
+    #       kubectl apply --server-side -f ./gateway/install.envoy.standard.crds.v1.4.1.yaml
+
+    #       echo "🔒 Install cert-manager"
+    #       kubectl apply -f ./cert-manager/install.cert-manager.v1.19.3.yaml
+    #       # TODO: добавить конфиг в скачанный выше файл
+    #       kubectl -n cert-manager patch deploy cert-manager \
+    #         --type=json \
+    #         -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-gateway-api"}]'
+
+    #       # ждем готовности подов
+    #       echo "⏳ Pod readiness timeout starts"
+    #       kubectl wait --for=condition=Ready pods \
+    #         --all \
+    #         -n cert-manager \
+    #         --timeout=200s
+    #       echo "⏳ Timeout ends"
+    #       kubectl apply -f ./cert-manager/issuer.yaml
+
+    #       echo "🌐 Install Envoy Gateway"
+    #       kubectl apply --server-side -f ./gateway/install.envoy.gateway.v1.6.2.yaml
+
+    #       echo "🌐 Install GatewayClass"
+    #       kubectl apply -f ./gateway/gatewayclass.yaml
+
+    #       echo "⏳ Create Gateway with temporary domain"
+    #       YOUR_LOAD_BALANCER_IP=example.com envsubst < ./gateway/gateway.yaml | kubectl apply -f -
+
+    #       echo "🔍 Waiting for LoadBalancer IP"
+    #       chmod +x ./scripts/getip.sh
+    #       ./scripts/getip.sh
+
+    #   - name: Send Success Notification
+    #     if: success()
+    #     run: |
+    #       curl -s -X POST https://api.telegram.org/bot${{secrets.TG_BOT_TOKEN}}/sendMessage \
+    #         -d chat_id=${{vars.TG_AKSYUTA}} \
+    #         -d text="✅ Установка софта произведена успешно"
+
+    #   - name: Send Failure Notification
+    #     if: failure()
+    #     run: |
+    #       curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
+    #         -d chat_id=${{ vars.TG_AKSYUTA }} \
+    #         -d text="❗️ Установка софта НЕ произошла"
 
     # - name: Execute Terraform destroy
     #   run: |
@@ -155,7 +174,7 @@ jobs:
     #     echo "🎉 Destroying completed successfully"
 
   destroy:
-    # needs: build
+    needs: build
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
