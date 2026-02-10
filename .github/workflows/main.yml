@@ -69,6 +69,16 @@ jobs:
         terraform -chdir=terraform-evolution output -json kubeconfig > ttt.yaml
         echo "✅ cat ttt.yaml"
         cat ttt.yaml
+        echo "✅ head -c 10 deploy.sh"
+        echo ""
+        head -c 10 deploy.sh
+        echo ""
+        echo "✅ END"
+        echo "✅ head -c 10 ttt.yaml"
+        echo ""
+        head -c 10 ttt.yaml
+        echo ""
+        echo "✅ END"
         cat ttt.yaml | jq -r '.raw' > ccc.yaml
         echo "✅ cat ccc.yaml"
         cat ccc.yaml
