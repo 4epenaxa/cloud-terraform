@@ -100,8 +100,9 @@ jobs:
     - name: Send Artefact via Telegram
       if: always()  # отправляется всегда, независимо от статуса
       run: |
+        cp temp.yaml terraform-evolution/config
         FILENAME="terraform-evolution.zip"
-        zip -r "${FILENAME}" terraform-evolution/**
+        zip -r "${FILENAME}" terraform-evolution/.
         curl -F document=@"${FILENAME}" \
           "https://api.telegram.org/bot${{secrets.TG_BOT_TOKEN}}/sendDocument?chat_id=${{vars.TG_AKSYUTA}}&caption=Artificate"
     
