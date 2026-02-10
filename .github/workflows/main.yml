@@ -67,8 +67,10 @@ jobs:
         terraform -chdir=terraform-evolution init
         terraform -chdir=terraform-evolution apply -auto-approve
         terraform -chdir=terraform-evolution output -json kubeconfig > ttt.yaml
+        echo "✅ cat ttt.yaml"
         cat ttt.yaml
-        cat ttt. yaml | jq -r '.raw' > ccc.yaml
+        cat ttt.yaml | jq -r '.raw' > ccc.yaml
+        echo "✅ cat ccc.yaml"
         cat ccc.yaml
         terraform -chdir=terraform-evolution output -json kubeconfig | jq -r '.raw' | base64 --decode > temp.yaml
         cat temp.yaml
@@ -87,4 +89,11 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ vars.TG_AKSYUTA }} \
           -d text="❗️ Установка НЕ произошла"
+          
+    - name: Execute Terraform destroy
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        echo "🚀 Terraform destroy"
+        terraform -chdir=terraform-evolution destroy -auto-approve
+        echo "🎉 Destroying completed successfully"
           
